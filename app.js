@@ -2,35 +2,68 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+const db = require('./models');
+const { user, contact } = require('./models');
 
-const db = require('./models')
-const { user } = require('./models')
+// parse requests of content-type - application/json
+app.use(express.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+
+db.sequelize.sync().then((data)=> {
+    app.listen(port, () => console.log(`listening at  http://localhost:${port}`));
+})   
 
 app.set('view engine', 'ejs')
 
 app.use(express.static('public'));
 
+app.get('/', (req, res) => res.render('index',{title:'Home'}))
 
-db.sequelize.sync().then(d => {
-    app.listen(port, () => console.log(`listening at  http://localhost:${port}`));
+app.get('/about', (req, res)=> res.render('about'))
+
+app.get('/contacts', (req, res) => contact.findAll().then(data => res.render('contacts',{contacts:data})))
+
+app.delete('/contacts/:id', (req, res) => {
+    
+    const id = req.params.id;
+    contact.destroy( { where:{id:id} } )
 })
 
 
-app.get('/', (req, res) => res.render('index', {title: 'Home',contacts }))
-app.get('/about', (req, res) => res.render('about'))
+app.get('/new-contact', (req, res)=> res.render('new-contact'))
 
-app.get('/contacts', (req, res) => {
-    user.findAll().then(contacts => res.render('contacts',{contacts}))
-})
+app.post("/contacts", (req,res)=> {
+    
+    const newContact = req.body;
+    contact.create(newContact).catch(err =>  (err) ? console.log(err) : '' );
+    res.send(newContact);
 
-app.post('/contacts', (req, res) => {
-    const newUser = req.body
-    user.create(newUser).catch(err => console.log(err))
-    res.redirect('/contacts')
 })
 
 
-app.get('/new-contact', (req, res) => res.render('new-contact'))
-app.use((req, res) => res.status(404).render('404'))
+
+app.get("/new-user", (req,res)=> res.render('new-user',{title:'Home'}))
+
+app.post("/new-user", (req,res)=> {
+    
+    const newUser = req.body;
+    user.create(newUser).catch(err =>  (err) ? console.log(err) : '' );
+    res.send(newUser);
+
+})
+
+app.get('/users', (req, res)=> {
+    user.findAll().then(data => res.send(data))
+})
+
+app.delete('/users', (req, res)=> {
+    
+    user.destroy({
+        where:{},
+        truncate:true
+    })
+    
+    res.send('Deletion of all data');
+})
