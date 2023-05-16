@@ -1,9 +1,13 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+const express = require('express')
+const app = express()
+const port = 7000
+
+// const students = [
+//     {id:'1', name:'x', email:'x@st'},{id:'2', name:'y', email:'y@st'},{id:'3', name:'z', email:'z@st'}
+// ]
 
 const db = require('./models');
-const { user, contact } = require('./models');
+const { student } = require('./models');
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -17,53 +21,17 @@ db.sequelize.sync().then((data)=> {
 
 app.set('view engine', 'ejs')
 
-app.use(express.static('public'));
-
-app.get('/', (req, res) => res.render('index',{title:'Home'}))
-
-app.get('/about', (req, res)=> res.render('about'))
-
-app.get('/contacts', (req, res) => contact.findAll().then(data => res.render('contacts',{contacts:data})))
-
-app.delete('/contacts/:id', (req, res) => {
-    
-    const id = req.params.id;
-    contact.destroy( { where:{id:id} } )
+app.get('/students', (req, res) => {
+    student.findAll().then( students => res.render('students',{students}))
 })
 
-
-app.get('/new-contact', (req, res)=> res.render('new-contact'))
-
-app.post("/contacts", (req,res)=> {
-    
-    const newContact = req.body;
-    contact.create(newContact).catch(err =>  (err) ? console.log(err) : '' );
-    res.send(newContact);
-
+app.get('/new-student', (req, res) => {
+    res.render('new-student')
 })
 
-
-
-app.get("/new-user", (req,res)=> res.render('new-user',{title:'Home'}))
-
-app.post("/new-user", (req,res)=> {
-    
-    const newUser = req.body;
-    user.create(newUser).catch(err =>  (err) ? console.log(err) : '' );
-    res.send(newUser);
-
+app.post('/students', (req, res) => {
+   const newStudent = req.body
+   student.create(newStudent).catch( e => console.log(e))
+    res.send(newStudent)
 })
 
-app.get('/users', (req, res)=> {
-    user.findAll().then(data => res.send(data))
-})
-
-app.delete('/users', (req, res)=> {
-    
-    user.destroy({
-        where:{},
-        truncate:true
-    })
-    
-    res.send('Deletion of all data');
-})

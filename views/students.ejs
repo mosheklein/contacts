@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% students.forEach( st => { %>
+        <div class="student" data-stid="<%= st.id%>">
+            <span><%= st.name%></span><span><%= st.email%></span>
+        </div>
+    <%})%>
+</body>
+</html>
