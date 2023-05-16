@@ -10,7 +10,28 @@
     <% students.forEach( st => { %>
         <div class="student" data-stid="<%= st.id%>">
             <span><%= st.name%></span><span><%= st.email%></span>
+            <a data-stid="<%= st.id%>" class="delete-user">Delete User</a>
         </div>
     <%})%>
+
+    <script>
+        const deletes = document.querySelectorAll('a.delete-user')
+        deletes.forEach( a => {
+            a.addEventListener('click', (e) => {
+                
+                const stid = e.target.dataset.stid
+                const endpoint = `/students/${stid}`
+                fetch(endpoint, {method: 'DELETE',})
+                .then( d =>{
+                    d.json().then( d => {
+                        window.location.href = d.location
+                    })
+                } )
+            })
+        })
+
+
+
+    </script>
 </body>
 </html>

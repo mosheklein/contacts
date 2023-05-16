@@ -35,3 +35,21 @@ app.post('/students', (req, res) => {
     res.send(newStudent)
 })
 
+app.delete('/students', (req, res) => {
+    student.destroy({
+        where:{},
+        truncate:true
+    })
+
+    res.send('All Records have been deleted')
+})
+
+app.delete('/students/:id', (req, res) => {
+    const studentID = req.params.id
+    student.destroy({
+        where:{id:studentID}
+    })
+
+    res.send({location:'/students'})
+})
+
