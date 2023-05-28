@@ -7,13 +7,10 @@ router.get('/', studentController.studetn_index)
 
 router.get('/create', studentController.student_create_get)
 
+router.get('/:id', studentController.student_details)
 
 
-router.post('/', (req, res) => {
-   const newStudent = req.body
-   student.create(newStudent).catch( e => console.log(e))
-    res.send(newStudent)
-})
+router.post('/', studentController.student_create_post)
 
 router.delete('/', (req, res) => {
     student.destroy({
@@ -24,13 +21,10 @@ router.delete('/', (req, res) => {
     res.send('All Records have been deleted')
 })
 
-router.delete('/:id', (req, res) => {
-    const studentID = req.params.id
-    student.destroy({
-        where:{id:studentID}
-    })
+router.delete('/:id',studentController.student_delete)
 
-    res.send({location:'/students'})
-})
+
+
+
 
 module.exports = router

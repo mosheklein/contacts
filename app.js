@@ -2,10 +2,6 @@ const express = require('express')
 const app = express()
 const port = 7000
 
-// const students = [
-//     {id:'1', name:'x', email:'x@st'},{id:'2', name:'y', email:'y@st'},{id:'3', name:'z', email:'z@st'}
-// ]
-
 const db = require('./models');
 
 const studentRouter = require('./routes/studentRoute.js')
